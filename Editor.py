@@ -2,9 +2,17 @@ from pytube import YouTube
 import os
 from moviepy.editor import *
 
-def MP4ToMP3(mp4, mp3):
-    FILETOCONVERT = AudioFileClip(mp4)
-    FILETOCONVERT.write_audiofile(mp3)
+def MP4ToMP3():
+    video_path = input("Insert part to .mp4")
+    print(video_path)
+    file_name = os.path.basename(video_path)
+    file_name = file_name.split('.')[0]
+    print(file_name)
+    # print(os.path.split(video_path)[0])
+    audio_path = os.path.split(video_path)[0] + '\\' + file_name + '.mp3'
+    print(audio_path)
+    FILETOCONVERT = AudioFileClip(video_path)
+    FILETOCONVERT.write_audiofile(audio_path)
     FILETOCONVERT.close()
 
 def downloading():
@@ -32,13 +40,5 @@ inp=input("download(1) or convert(2)")
 if float(inp)==1:
     downloading()
 elif float(inp)==2:
-    video_path=input("Insert part to .mp4")
-    print(video_path)
-    file_name = os.path.basename(video_path)
-    file_name = file_name.split('.')[0]
-    print(file_name)
-    print(os.path.split(video_path)[0])
-    audio_path=os.path.split(video_path)[0]+'\\'+file_name+'.mp3'
-    print(audio_path)
-    MP4ToMP3(video_path, audio_path)
+    MP4ToMP3()
 
