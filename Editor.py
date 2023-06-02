@@ -41,10 +41,12 @@ def path_valid(path):
         errmsg2.set("")
         buttonA.configure(state="normal")
         buttonV.configure(state="normal")
+        button_convert.configure(state="normal")
     else:
         errmsg2.set("The entered string is not a valid folder path or the folder does not exist")
         buttonA.configure(state="disabled")
         buttonV.configure(state="disabled")
+        button_convert.configure(state="disabled")
     return os.path.isdir(path)
 
 def button_Video():
@@ -79,44 +81,43 @@ app.geometry(f"{450}x{300}")
 
 
 frame=ctk.CTkFrame(master=app)
-#frame.pack(pady=20,padx=60,fill="both",expand=True)
 frame.grid(row=0, column=0, rowspan=4, padx=(10, 20), pady=(20, 20),sticky="nsew")
 frame.grid_rowconfigure(4, weight=1)
 
 errmsg = tkinter.StringVar()
 errmsg2 = tkinter.StringVar()
+
 label1=ctk.CTkLabel(master=frame,text="Insert link to a video from Youtube",font=ctk.CTkFont(size=11, weight="bold"))
-#label1.pack(pady=10,padx=10,anchor=tkinter.W)
 label1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
+label2=ctk.CTkLabel(master=frame,text="Download:",font=ctk.CTkFont(size=11, weight="bold"))
+label2.grid(row=1, column=1, padx=10, pady=(5, 5))
+
 buttonV = ctk.CTkButton(master=frame, text="Video", command=button_Video)
-#buttonV.pack(pady=10,padx=10,anchor=tkinter.E)
 buttonV.grid(row=2, column=1,padx=20, pady=10)
 
 buttonA = ctk.CTkButton(master=frame, text="Audio", command=button_Audio)
-#buttonA.pack(pady=10,padx=10, anchor=tkinter.E)
 buttonA.grid(row=3, column=1,padx=20, pady=10)
+
+button_convert=ctk.CTkButton(master=frame,text="Convert to mp3",command=MP4ToMP3)
+button_convert.grid(row=5, column=0, padx=20, pady=4)
+
 error_label = ctk.CTkLabel(master=frame,fg_color="transparent", textvariable=errmsg, wraplength=250)
-#error_label.place(relx=0.5, rely=0.5, anchor=tkinter.NW)
 error_label.grid(row=1, column=0, padx=20, pady=(5, 5))
 
 check=app.register(is_valid)
 entry1=ctk.CTkEntry(master=frame,placeholder_text="Link",validate="focusout",validatecommand=(check,"%P"))
-#entry1.place(relx=0.1, rely=0.3,anchor=tkinter.W)
 entry1.grid(row=2, column=0,padx=20, pady=10)
-#entry1.bind("<KeyPress>", is_valid(entry1.get()))
+
 
 check2=app.register(path_valid)
 entry2=ctk.CTkEntry(master=frame,placeholder_text="Save path",validate="focusout",validatecommand=(check2,"%P"))
-#entry2.place(relx=0.1, rely=0.4,anchor=tkinter.W)
 entry2.grid(row=3, column=0,padx=20, pady=10)
-#entry2.bind("<KeyPress>", path_valid(entry2.get()))
+
 
 error_label2 = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg2, wraplength=250)
-#error_label.place(relx=0.5, rely=0.5, anchor=tkinter.NW)
 error_label2.grid(row=4, column=0, padx=20, pady=5)
 
-button_convert=ctk.CTkButton(master=frame,text="Convert to mp3",command=MP4ToMP3)
-button_convert.grid(row=5, column=0, padx=20, pady=4)
+
 
 app.mainloop()
