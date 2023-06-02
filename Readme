@@ -1,4 +1,8 @@
+Small tool for downloading videos with an option to download only their audiopart. Videos can be converted from mp4 to mp3.
+Version with interface
+
 Requirements:
 
 pytube
 moviepy
+сustomtkinter
