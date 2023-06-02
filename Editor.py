@@ -9,15 +9,13 @@ def change_appearance_mode_event(new_appearance_mode: str):
     ctk.set_appearance_mode(new_appearance_mode)
 
 def MP4ToMP3():
-    video_path = input("Insert part to .mp4\n")
-    print(video_path)
-    file_name = os.path.basename(video_path)
+    file_name = os.path.basename(entry2.get())
     file_name = file_name.split('.')[0]
     print(file_name)
     # print(os.path.split(video_path)[0])
-    audio_path = os.path.split(video_path)[0] + '\\' + file_name + '.mp3'
+    audio_path = os.path.split(entry2.get())[0] + '\\' + file_name + '.mp3'
     print(audio_path)
-    FILETOCONVERT = AudioFileClip(video_path)
+    FILETOCONVERT = AudioFileClip(entry2.get())
     FILETOCONVERT.write_audiofile(audio_path)
     FILETOCONVERT.close()
 
@@ -30,11 +28,12 @@ def is_valid(link):
         buttonA.configure(state="normal")
         buttonV.configure(state="normal")
         errmsg.set("")
+        return True
     else:
         errmsg.set("Unvalid Youtube link")
         buttonA.configure(state="disabled")
         buttonV.configure(state="disabled")
-    return match
+        return False
 
 def path_valid(path):
     print(os.path.isdir(path))
@@ -47,6 +46,7 @@ def path_valid(path):
         buttonA.configure(state="disabled")
         buttonV.configure(state="disabled")
     return os.path.isdir(path)
+
 def button_Video():
     link = entry1.get()
     yt = YouTube(link)
@@ -74,15 +74,13 @@ ctk.set_default_color_theme("dark-blue")
 
 app=ctk.CTk()
 app.title("AVEditor")
-app.geometry(f"{500}x{350}")
+app.geometry(f"{450}x{300}")
 
-app.grid_columnconfigure(1, weight=1)
-app.grid_columnconfigure((2, 3), weight=0)
-app.grid_rowconfigure((0, 1, 2), weight=1)
+
 
 frame=ctk.CTkFrame(master=app)
 #frame.pack(pady=20,padx=60,fill="both",expand=True)
-frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
+frame.grid(row=0, column=0, rowspan=4, padx=(10, 20), pady=(20, 20),sticky="nsew")
 frame.grid_rowconfigure(4, weight=1)
 
 errmsg = tkinter.StringVar()
@@ -103,20 +101,22 @@ error_label = ctk.CTkLabel(master=frame,fg_color="transparent", textvariable=err
 error_label.grid(row=1, column=0, padx=20, pady=(5, 5))
 
 check=app.register(is_valid)
-entry1=ctk.CTkEntry(master=frame,placeholder_text="Link",validate="key",validatecommand=(check,"%P"))
+entry1=ctk.CTkEntry(master=frame,placeholder_text="Link",validate="focusout",validatecommand=(check,"%P"))
 #entry1.place(relx=0.1, rely=0.3,anchor=tkinter.W)
 entry1.grid(row=2, column=0,padx=20, pady=10)
-entry1.bind("<KeyPress>", is_valid(entry1.get()))
+#entry1.bind("<KeyPress>", is_valid(entry1.get()))
 
 check2=app.register(path_valid)
-entry2=ctk.CTkEntry(master=frame,placeholder_text="Save path",validate="key",validatecommand=(check2,"%P"))
+entry2=ctk.CTkEntry(master=frame,placeholder_text="Save path",validate="focusout",validatecommand=(check2,"%P"))
 #entry2.place(relx=0.1, rely=0.4,anchor=tkinter.W)
 entry2.grid(row=3, column=0,padx=20, pady=10)
-entry2.bind("<KeyPress>", path_valid(entry2.get()))
+#entry2.bind("<KeyPress>", path_valid(entry2.get()))
 
 error_label2 = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg2, wraplength=250)
 #error_label.place(relx=0.5, rely=0.5, anchor=tkinter.NW)
 error_label2.grid(row=4, column=0, padx=20, pady=5)
 
+button_convert=ctk.CTkButton(master=frame,text="Convert to mp3",command=MP4ToMP3)
+button_convert.grid(row=5, column=0, padx=20, pady=4)
 
 app.mainloop()
