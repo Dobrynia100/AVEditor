@@ -6,11 +6,11 @@ import tkinter
 import customtkinter as ctk
 
 
-def change_appearance_mode_event(new_appearance_mode: str):
+def change_appearance_mode_event(new_appearance_mode: str): # Function for the appearance change button
     ctk.set_appearance_mode(new_appearance_mode)
 
 
-def change_language(new_language: str):
+def change_language(new_language: str): # Changing the UI language from a file
     print(new_language)
     if new_language == "English":
         file = open("Eng_language", "r")
@@ -18,6 +18,7 @@ def change_language(new_language: str):
     else:
         with open('Ru_language', 'r', encoding='utf-8') as file:
             lines = file.readlines()
+
     label1.configure(text=lines[0])
     label2.configure(text=lines[1])
     appearance_mode_label.configure(text=lines[2])
@@ -29,10 +30,11 @@ def change_language(new_language: str):
     entry2.configure(placeholder_text=lines[8])
     errmsg3.set(lines[9])
     errmsg4.set(lines[10])
+
     file.close
 
 
-def MP4ToMP3():
+def MP4ToMP3(): #Converts mp4 file to mp3
     file_name = os.path.basename(entry2.get())
     file_name = file_name.split('.')[0]
     print(file_name)
@@ -44,7 +46,7 @@ def MP4ToMP3():
     FILETOCONVERT.close()
 
 
-def is_valid(link):
+def is_valid(link): # Checks if the entered link is a youtube link
     pattern = r'^https?://(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_-]+)$'
     match = re.match(pattern, link)
     print(re.match(pattern, link))
@@ -61,7 +63,7 @@ def is_valid(link):
         return False
 
 
-def path_valid(path):
+def path_valid(path):# Checks if the entered path is a path to folder or file
     print(os.path.isdir(path))
     temp = errmsg4.get()
     if os.path.isdir(path):
@@ -70,14 +72,14 @@ def path_valid(path):
         buttonV.configure(state="normal")
         button_convert.configure(state="normal")
     else:
-        errmsg2.set(temp)#("The entered string is not a valid folder path or the folder does not exist")
+        errmsg2.set(temp)
         buttonA.configure(state="disabled")
         buttonV.configure(state="disabled")
         button_convert.configure(state="disabled")
     return os.path.isdir(path)
 
 
-def button_Video():
+def button_Video(): # downloads highest resolution video from youtube
     link = entry1.get()
     yt = YouTube(link)
     print("Title:", yt.title)
@@ -87,7 +89,7 @@ def button_Video():
     print('Downloaded')
 
 
-def button_Audio():
+def button_Audio(): #downloads only audio from youtube video
     link = entry1.get()
     yt = YouTube(link)
     print("Title:", yt.title)
@@ -97,23 +99,19 @@ def button_Audio():
     print('Downloaded')
 
 
-def cut(event):
-    print(event)
-
-
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 default_lang = "English"
 
 app = ctk.CTk()
 app.title("AVEditor")
-app.geometry(f"{620}x{335}")
+app.geometry(f"{620}x{335}") #app resolution
 
-frame = ctk.CTkFrame(master=app)
+frame = ctk.CTkFrame(master=app) #main background frame
 frame.grid(row=0, column=1, rowspan=4, padx=(10, 20), pady=(20, 20), sticky="nsew")
 frame.grid_rowconfigure(4, weight=1)
 
-sidebar_frame = ctk.CTkFrame(master=app, width=140, corner_radius=0)
+sidebar_frame = ctk.CTkFrame(master=app, width=140, corner_radius=0) # frame for settings
 sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
 sidebar_frame.grid_rowconfigure(4, weight=1)
 
@@ -121,8 +119,9 @@ errmsg = tkinter.StringVar()
 errmsg2 = tkinter.StringVar()
 errmsg3 = tkinter.StringVar()
 errmsg4 = tkinter.StringVar()
+
 label1 = ctk.CTkLabel(master=frame, text="Insert link to a video from Youtube",
-                      font=ctk.CTkFont(size=11, weight="bold"))
+                      font=ctk.CTkFont(size=11, weight="bold")) #Instruction label
 label1.grid(row=0, column=1, padx=20, pady=(20, 10))
 
 label2 = ctk.CTkLabel(master=frame, text="Download:", font=ctk.CTkFont(size=11, weight="bold"))
@@ -140,19 +139,19 @@ language_label.grid(row=3, column=0, padx=20, pady=(10, 0))
 language_options = ctk.CTkOptionMenu(sidebar_frame, values=["English", "Russian"], command=change_language)
 language_options.grid(row=4, column=0, padx=20, pady=(10, 10))
 
-buttonV = ctk.CTkButton(master=frame, text="Video", command=button_Video)
+buttonV = ctk.CTkButton(master=frame, text="Video", command=button_Video)#button to download a Video
 buttonV.grid(row=2, column=2, padx=20, pady=10)
 
-buttonA = ctk.CTkButton(master=frame, text="Audio", command=button_Audio)
+buttonA = ctk.CTkButton(master=frame, text="Audio", command=button_Audio)#button to download a Audio
 buttonA.grid(row=3, column=2, padx=20, pady=10)
 
-button_convert = ctk.CTkButton(master=frame, text="Convert to mp3", command=MP4ToMP3)
+button_convert = ctk.CTkButton(master=frame, text="Convert to mp3", command=MP4ToMP3)#button to convert mp4 to mp3
 button_convert.grid(row=5, column=1, padx=20, pady=4)
 
-error_label = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg, wraplength=250)
+error_label = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg, wraplength=250)#error label for incorrect youtube link
 error_label.grid(row=1, column=1, padx=20, pady=(5, 5))
 
-check = app.register(is_valid)
+check = app.register(is_valid) # checks if input is correct
 entry1 = ctk.CTkEntry(master=frame, placeholder_text="Link", validate="focusout", validatecommand=(check, "%P"))
 entry1.grid(row=2, column=1, padx=20, pady=10)
 
@@ -160,7 +159,7 @@ check2 = app.register(path_valid)
 entry2 = ctk.CTkEntry(master=frame, placeholder_text="Save path", validate="focusout", validatecommand=(check2, "%P"))
 entry2.grid(row=3, column=1, padx=20, pady=10)
 
-error_label2 = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg2, wraplength=250)
+error_label2 = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg2, wraplength=250)#error label for incorrect path
 error_label2.grid(row=4, column=1, padx=20, pady=5)
 change_language(default_lang)
 
