@@ -84,6 +84,8 @@ def path_valid(path):# Checks if the entered path is a path to folder or file
 def button_Video(): # downloads highest resolution video from youtube
     link = entry1.get()
     yt = YouTube(link,on_progress_callback=progress_func)
+    if yt.age_restricted:
+        yt.bypass_age_gate()
     print("Title:", yt.title)
     downl = yt.streams.get_highest_resolution()
     print('Video')
@@ -99,24 +101,32 @@ def button_Audio(): #downloads only audio from youtube video
             link = entry1.get()
         bar.grid(row=5, column=1, padx=10, pady=4)
         bar.set(0)
-        yt = YouTube(link,use_oauth=True,  allow_oauth_cache=True,on_progress_callback=progress_func,on_complete_callback=complete)
-      #  stream = yt.streams.get_audio_only()
+        yt = YouTube(link,on_progress_callback=progress_func,on_complete_callback=complete)#,use_oauth=True,  allow_oauth_cache=True,on_progress_callback=progress_func,on_complete_callback=complete)
+        if yt.age_restricted:
+          yt.bypass_age_gate()
+          #dialog=ctk.CTkToplevel(text="Please open https://www.google.com/device and input code \n Press enter when you have completed this step.")
+      # stream = yt.streams.get_audio_only()
        # stream.download(output_path=entry2.get(),filename=stream.default_filename,on_progress_callback=progress_func)
         print("Title:", yt.title)
         downl = yt.streams.get_audio_only()
         print('Audio')
         downl.download(entry2.get())
         print('Downloaded')
-        #bar.stop()
+        bar.grid_forget()
+        errmsg2.grid_forget()
     except Exception as e:
         print("Error while downloading:", e)
 
-def complete(stream,file_name):
-    # file_name = file_name.split('.')[0]
-    # print(file_name)
-    # audio_path = os.path.split(entry2.get())[0] + '\\' + file_name + '.mp3'
-    # FILETOCONVERT = AudioFileClip(entry2.get())
-    # FILETOCONVERT.write_audiofile(audio_path)
+def complete(stream,file_path):
+    print(file_path)
+    FILETOCONVERT = AudioFileClip(file_path)
+    file_name = os.path.basename(file_path)
+    file_name = file_name.split('.')[0]
+    print(file_name)
+    audio_path = os.path.split(file_path)[0] + '\\' + file_name + '.mp3'
+    print(audio_path)
+    FILETOCONVERT.write_audiofile(audio_path)
+    FILETOCONVERT.close()
     errmsg2.set("Downloaded")
 
 def progress_func(stream, chunk, bytes_remaining):
