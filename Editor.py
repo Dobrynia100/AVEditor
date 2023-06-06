@@ -83,7 +83,7 @@ def path_valid(path):# Checks if the entered path is a path to folder or file
 
 def button_Video(): # downloads highest resolution video from youtube
     link = entry1.get()
-    yt = YouTube(link,on_progress_callback=progress_func,on_complete_callback=complete)
+    yt = YouTube(link,on_progress_callback=progress_func)
     print("Title:", yt.title)
     downl = yt.streams.get_highest_resolution()
     print('Video')
@@ -92,22 +92,54 @@ def button_Video(): # downloads highest resolution video from youtube
 
 
 def button_Audio(): #downloads only audio from youtube video
-    if random.random()<=0.01:
-        link="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    else:
-        link = entry1.get()
-    yt = YouTube(link,use_oauth=True,  allow_oauth_cache=True,on_progress_callback=progress_func,on_complete_callback=complete)
-    print("Title:", yt.title)
-    downl = yt.streams.get_audio_only()
-    print('Audio')
-    downl.download(entry2.get())
-    print('Downloaded')
+    try:
+        if random.random()<=0.01:
+            link="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        else:
+            link = entry1.get()
+        bar.grid(row=5, column=1, padx=10, pady=4)
+        bar.set(0)
+        yt = YouTube(link,use_oauth=True,  allow_oauth_cache=True,on_progress_callback=progress_func,on_complete_callback=complete)
+      #  stream = yt.streams.get_audio_only()
+       # stream.download(output_path=entry2.get(),filename=stream.default_filename,on_progress_callback=progress_func)
+        print("Title:", yt.title)
+        downl = yt.streams.get_audio_only()
+        print('Audio')
+        downl.download(entry2.get())
+        print('Downloaded')
+        #bar.stop()
+    except Exception as e:
+        print("Error while downloading:", e)
 
-def complete():
-    error_label2.configure(text="Downloaded")
+def complete(stream,file_name):
+    # file_name = file_name.split('.')[0]
+    # print(file_name)
+    # audio_path = os.path.split(entry2.get())[0] + '\\' + file_name + '.mp3'
+    # FILETOCONVERT = AudioFileClip(entry2.get())
+    # FILETOCONVERT.write_audiofile(audio_path)
+    errmsg2.set("Downloaded")
 
-def progress_func():
-    bar.step()
+def progress_func(stream, chunk, bytes_remaining):
+     #total_size = stream.filesize
+     #bytes_downloaded = total_size - bytes_remaining
+     n = 500
+     iter_step = 1 / n
+     progress_step = iter_step
+     bar.start()
+     for x in range(500):
+         bar.set(progress_step)
+         progress_step += iter_step
+         app.update()
+     bar.stop()
+    # print(bytes_downloaded)
+    # progress = int((bytes_downloaded / total_size) * 100)
+    # print(progress)
+    # print(bar.get())
+    # bar.set(0)
+    # print(bar.get())
+    # bar.start()
+    #bar.set(bar.get()+len(chunk))
+    #bar.step()
 
 def settings():
     print("Loading settings")
@@ -119,6 +151,7 @@ def settings():
     language_options.set(settings["language"])
     change_appearance_mode_event(settings["appearance_mode"])
     appearance_mode_optionemenu.set(settings["appearance_mode"])
+
 def save_settings():
     new_settings = {
         "language": language_options.get(),
@@ -148,7 +181,6 @@ errmsg = tkinter.StringVar()
 errmsg2 = tkinter.StringVar()
 errmsg3 = tkinter.StringVar()
 errmsg4 = tkinter.StringVar()
-default_lang=tkinter.StringVar()
 
 
 label1 = ctk.CTkLabel(master=frame, text="Insert link to a video from Youtube",
@@ -177,7 +209,7 @@ buttonA = ctk.CTkButton(master=frame, text="Audio", command=button_Audio)#button
 buttonA.grid(row=3, column=2, padx=20, pady=10)
 
 button_convert = ctk.CTkButton(master=frame, text="Convert to mp3", command=MP4ToMP3)#button to convert mp4 to mp3
-button_convert.grid(row=5, column=1, padx=20, pady=4)
+button_convert.grid(row=5, column=2, padx=20, pady=4)
 
 button_Save=ctk.CTkButton(master=sidebar_frame,text="Save Settings",command=save_settings)
 button_Save.grid(row=6, column=0, padx=20, pady=(10, 10))
@@ -196,10 +228,8 @@ entry2.grid(row=3, column=1, padx=20, pady=10)
 error_label2 = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg2, wraplength=250)#error label for incorrect path
 error_label2.grid(row=4, column=1, padx=20, pady=5)
 
-bar=ctk.CTkProgressBar(master=frame)
-#bar.grid(row=5,column=2,padx=10,pady=4)
+bar=ctk.CTkProgressBar(master=frame,width=100)
 
 settings()
-
 
 app.mainloop()
