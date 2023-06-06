@@ -5,10 +5,11 @@ from moviepy.editor import *
 import tkinter
 import customtkinter as ctk
 import random
-
+import json
 
 def change_appearance_mode_event(new_appearance_mode: str): # Function for the appearance change button
     ctk.set_appearance_mode(new_appearance_mode)
+
 
 
 def change_language(new_language: str): # Changing the UI language from a file
@@ -82,7 +83,7 @@ def path_valid(path):# Checks if the entered path is a path to folder or file
 
 def button_Video(): # downloads highest resolution video from youtube
     link = entry1.get()
-    yt = YouTube(link)
+    yt = YouTube(link,on_progress_callback=progress_func,on_complete_callback=complete)
     print("Title:", yt.title)
     downl = yt.streams.get_highest_resolution()
     print('Video')
@@ -95,20 +96,45 @@ def button_Audio(): #downloads only audio from youtube video
         link="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
     else:
         link = entry1.get()
-    yt = YouTube(link,use_oauth=True,  allow_oauth_cache=True)
+    yt = YouTube(link,use_oauth=True,  allow_oauth_cache=True,on_progress_callback=progress_func,on_complete_callback=complete)
     print("Title:", yt.title)
     downl = yt.streams.get_audio_only()
     print('Audio')
     downl.download(entry2.get())
     print('Downloaded')
 
+def complete():
+    error_label2.configure(text="Downloaded")
+
+def progress_func():
+    bar.step()
+
+def settings():
+    print("Loading settings")
+    with open('Config.json', 'r') as file:
+        settings_data = file.read()
+    settings = json.loads(settings_data)
+
+    change_language(settings["language"])
+    language_options.set(settings["language"])
+    change_appearance_mode_event(settings["appearance_mode"])
+    appearance_mode_optionemenu.set(settings["appearance_mode"])
+def save_settings():
+    new_settings = {
+        "language": language_options.get(),
+        "appearance_mode": appearance_mode_optionemenu.get()
+    }
+
+    with open('Config.json', 'w') as file:
+        json.dump(new_settings, file)
+
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
-default_lang = "English"
+
 
 app = ctk.CTk()
 app.title("AVEditor")
-app.geometry(f"{620}x{335}") #app resolution
+app.geometry(f"{660}x{335}") #app resolution
 
 frame = ctk.CTkFrame(master=app) #main background frame
 frame.grid(row=0, column=1, rowspan=4, padx=(10, 20), pady=(20, 20), sticky="nsew")
@@ -122,6 +148,8 @@ errmsg = tkinter.StringVar()
 errmsg2 = tkinter.StringVar()
 errmsg3 = tkinter.StringVar()
 errmsg4 = tkinter.StringVar()
+default_lang=tkinter.StringVar()
+
 
 label1 = ctk.CTkLabel(master=frame, text="Insert link to a video from Youtube",
                       font=ctk.CTkFont(size=11, weight="bold")) #Instruction label
@@ -134,7 +162,7 @@ appearance_mode_label = ctk.CTkLabel(sidebar_frame, text="Appearance Mode:", anc
 appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
 appearance_mode_optionemenu = ctk.CTkOptionMenu(sidebar_frame, values=["Light", "Dark", "System"],
                                                 command=change_appearance_mode_event)
-appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
+appearance_mode_optionemenu.grid(row=5, column=0, padx=20, pady=(10, 10))
 appearance_mode_optionemenu.set("Dark")
 
 language_label = ctk.CTkLabel(sidebar_frame, text="language", anchor="w")
@@ -151,6 +179,9 @@ buttonA.grid(row=3, column=2, padx=20, pady=10)
 button_convert = ctk.CTkButton(master=frame, text="Convert to mp3", command=MP4ToMP3)#button to convert mp4 to mp3
 button_convert.grid(row=5, column=1, padx=20, pady=4)
 
+button_Save=ctk.CTkButton(master=sidebar_frame,text="Save Settings",command=save_settings)
+button_Save.grid(row=6, column=0, padx=20, pady=(10, 10))
+
 error_label = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg, wraplength=250)#error label for incorrect youtube link
 error_label.grid(row=1, column=1, padx=20, pady=(5, 5))
 
@@ -164,6 +195,11 @@ entry2.grid(row=3, column=1, padx=20, pady=10)
 
 error_label2 = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg2, wraplength=250)#error label for incorrect path
 error_label2.grid(row=4, column=1, padx=20, pady=5)
-change_language(default_lang)
+
+bar=ctk.CTkProgressBar(master=frame)
+#bar.grid(row=5,column=2,padx=10,pady=4)
+
+settings()
+
 
 app.mainloop()
