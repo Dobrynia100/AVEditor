@@ -4,6 +4,7 @@ import re
 from moviepy.editor import *
 import tkinter
 import customtkinter as ctk
+import random
 
 
 def change_appearance_mode_event(new_appearance_mode: str): # Function for the appearance change button
@@ -90,14 +91,16 @@ def button_Video(): # downloads highest resolution video from youtube
 
 
 def button_Audio(): #downloads only audio from youtube video
-    link = entry1.get()
-    yt = YouTube(link)
+    if random.random()<=0.01:
+        link="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    else:
+        link = entry1.get()
+    yt = YouTube(link,use_oauth=True,  allow_oauth_cache=True)
     print("Title:", yt.title)
     downl = yt.streams.get_audio_only()
     print('Audio')
     downl.download(entry2.get())
     print('Downloaded')
-
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
