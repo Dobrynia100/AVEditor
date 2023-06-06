@@ -3,6 +3,7 @@ import os
 import re
 from moviepy.editor import *
 import tkinter
+from tkinter import messagebox
 import customtkinter as ctk
 import random
 import json
@@ -37,15 +38,18 @@ def change_language(new_language: str): # Changing the UI language from a file
 
 
 def MP4ToMP3(): #Converts mp4 file to mp3
-    file_name = os.path.basename(entry2.get())
-    file_name = file_name.split('.')[0]
-    print(file_name)
-    # print(os.path.split(video_path)[0])
-    audio_path = os.path.split(entry2.get())[0] + '\\' + file_name + '.mp3'
-    print(audio_path)
-    FILETOCONVERT = AudioFileClip(entry2.get())
-    FILETOCONVERT.write_audiofile(audio_path)
-    FILETOCONVERT.close()
+    try:
+        file_name = os.path.basename(entry2.get())
+        file_name = file_name.split('.')[0]
+        print(file_name)
+        # print(os.path.split(video_path)[0])
+        audio_path = os.path.split(entry2.get())[0] + '\\' + file_name + '.mp3'
+        print(audio_path)
+        FILETOCONVERT = AudioFileClip(entry2.get())
+        FILETOCONVERT.write_audiofile(audio_path)
+        FILETOCONVERT.close()
+    except Exception as e:
+        messagebox.ERROR(title="Error",message=("Error while converting:", e))
 
 
 def is_valid(link): # Checks if the entered link is a youtube link
@@ -115,7 +119,7 @@ def button_Audio(): #downloads only audio from youtube video
         bar.grid_forget()
         errmsg2.grid_forget()
     except Exception as e:
-        print("Error while downloading:", e)
+        messagebox.ERROR(title="Error",message=("Error while downloading:", e))
 
 def complete(stream,file_path):
     print(file_path)
@@ -127,6 +131,7 @@ def complete(stream,file_path):
     print(audio_path)
     FILETOCONVERT.write_audiofile(audio_path)
     FILETOCONVERT.close()
+    os.remove(file_path)
     errmsg2.set("Downloaded")
 
 def progress_func(stream, chunk, bytes_remaining):
