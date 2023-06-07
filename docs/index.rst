@@ -15,7 +15,8 @@ Usage
 4. Click the 'Audio' button to download only the audio from the video.
 5. Click the 'Convert to mp3' button to convert an mp4 file to mp3 format.
 
-Note:For converting file to mp3 you need to insert path with a file name inthe 'Save path' input field.
+Note:For converting file to mp3 you need to insert path with a file name in the 'Save path' input field.
+
 Settings
 --------
 The application provides the following settings that can be customized:

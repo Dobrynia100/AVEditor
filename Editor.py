@@ -14,6 +14,7 @@ def change_appearance_mode_event(new_appearance_mode: str): # Function for the a
 
 
 
+
 def change_language(new_language: str): # Changing the UI language from a file
     print(new_language)
     if new_language == "English":
