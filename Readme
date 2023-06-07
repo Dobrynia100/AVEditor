@@ -1,8 +1,12 @@
 Small tool for downloading videos with an option to download only their audiopart. Videos can be converted from mp4 to mp3.
 Version with interface
 
-Requirements:
+Dependencies:
 
-pytube
-moviepy
-сustomtkinter
+  The AVEditor application requires the following dependencies:
+
+  pytube: A library for downloading YouTube videos.
+
+  moviepy: A library for video editing and conversion.
+
+  customtkinter: A custom tkinter library for enhanced GUI elements.
