@@ -8,6 +8,7 @@ import customtkinter as ctk
 import random
 import json
 
+
 def change_appearance_mode_event(new_appearance_mode: str): # Function for the appearance change button
     ctk.set_appearance_mode(new_appearance_mode)
 
@@ -31,9 +32,11 @@ def change_language(new_language: str): # Changing the UI language from a file
     button_convert.configure(text=lines[6])
     entry1.configure(placeholder_text=lines[7])
     entry2.configure(placeholder_text=lines[8])
-    errmsg3.set(lines[9])
-    errmsg4.set(lines[10])
-
+    errmsg.set(lines[9])
+    errmsg2.set(lines[10])
+    downl.set(lines[11])
+    errmsg3.set(lines[12])
+    errmsg4.set(lines[13])
     file.close
 
 
@@ -49,21 +52,21 @@ def MP4ToMP3(): #Converts mp4 file to mp3
         FILETOCONVERT.write_audiofile(audio_path)
         FILETOCONVERT.close()
     except Exception as e:
-        messagebox.ERROR(title="Error",message=("Error while converting:", e))
+        messagebox.ERROR(title="Error",message=(errmsg3.get(), e))
 
 
 def is_valid(link): # Checks if the entered link is a youtube link
+    Download_label.grid_forget()
     pattern = r'^https?://(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_-]+)$'
     match = re.match(pattern, link)
     print(re.match(pattern, link))
-    temp = errmsg3.get()
     if match:
         buttonA.configure(state="normal")
         buttonV.configure(state="normal")
-        errmsg.set("")
+        error_label.grid_forget()
         return True
     else:
-        errmsg.set(temp)
+        error_label.grid(row=1, column=1, padx=20, pady=(5, 5))
         buttonA.configure(state="disabled")
         buttonV.configure(state="disabled")
         return False
@@ -71,14 +74,13 @@ def is_valid(link): # Checks if the entered link is a youtube link
 
 def path_valid(path):# Checks if the entered path is a path to folder or file
     print(os.path.isdir(path))
-    temp = errmsg4.get()
     if os.path.isdir(path):
-        errmsg2.set("")
+        error_label2.grid_forget()
         buttonA.configure(state="normal")
         buttonV.configure(state="normal")
         button_convert.configure(state="normal")
     else:
-        errmsg2.set(temp)
+        error_label2.grid(row=4, column=1, padx=20, pady=5)
         buttonA.configure(state="disabled")
         buttonV.configure(state="disabled")
         button_convert.configure(state="disabled")
@@ -87,7 +89,7 @@ def path_valid(path):# Checks if the entered path is a path to folder or file
 
 def button_Video(): # downloads highest resolution video from youtube
     link = entry1.get()
-    yt = YouTube(link,on_progress_callback=progress_func)
+    yt = YouTube(link)
     if yt.age_restricted:
         yt.bypass_age_gate()
     print("Title:", yt.title)
@@ -103,58 +105,33 @@ def button_Audio(): #downloads only audio from youtube video
             link="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
         else:
             link = entry1.get()
-        bar.grid(row=5, column=1, padx=10, pady=4)
-        bar.set(0)
-        yt = YouTube(link,on_progress_callback=progress_func,on_complete_callback=complete)#,use_oauth=True,  allow_oauth_cache=True,on_progress_callback=progress_func,on_complete_callback=complete)
+        yt = YouTube(link,on_complete_callback=complete)#,use_oauth=True,  allow_oauth_cache=True,on_progress_callback=progress_func,on_complete_callback=complete)
         if yt.age_restricted:
           yt.bypass_age_gate()
-          #dialog=ctk.CTkToplevel(text="Please open https://www.google.com/device and input code \n Press enter when you have completed this step.")
-      # stream = yt.streams.get_audio_only()
-       # stream.download(output_path=entry2.get(),filename=stream.default_filename,on_progress_callback=progress_func)
+
         print("Title:", yt.title)
-        downl = yt.streams.get_audio_only()
+        load = yt.streams.get_audio_only()
         print('Audio')
-        downl.download(entry2.get())
+        load.download(entry2.get())
         print('Downloaded')
-        bar.grid_forget()
-        errmsg2.grid_forget()
     except Exception as e:
-        messagebox.ERROR(title="Error",message=("Error while downloading:", e))
+        messagebox.ERROR(title="Error",message=(errmsg4.get(), e))
 
 def complete(stream,file_path):
-    print(file_path)
+    #print(file_path)
     FILETOCONVERT = AudioFileClip(file_path)
     file_name = os.path.basename(file_path)
     file_name = file_name.split('.')[0]
-    print(file_name)
+    #print(file_name)
     audio_path = os.path.split(file_path)[0] + '\\' + file_name + '.mp3'
-    print(audio_path)
+    #print(audio_path)
     FILETOCONVERT.write_audiofile(audio_path)
     FILETOCONVERT.close()
     os.remove(file_path)
-    errmsg2.set("Downloaded")
+    Download_label.grid(row=2, column=0, padx=20, pady=5)
 
-def progress_func(stream, chunk, bytes_remaining):
-     #total_size = stream.filesize
-     #bytes_downloaded = total_size - bytes_remaining
-     n = 500
-     iter_step = 1 / n
-     progress_step = iter_step
-     bar.start()
-     for x in range(500):
-         bar.set(progress_step)
-         progress_step += iter_step
-         app.update()
-     bar.stop()
-    # print(bytes_downloaded)
-    # progress = int((bytes_downloaded / total_size) * 100)
-    # print(progress)
-    # print(bar.get())
-    # bar.set(0)
-    # print(bar.get())
-    # bar.start()
-    #bar.set(bar.get()+len(chunk))
-    #bar.step()
+def compV(stream,file_path):
+    Download_label.grid(row=2, column=0, padx=20, pady=5)
 
 def settings():
     print("Loading settings")
@@ -182,20 +159,21 @@ ctk.set_default_color_theme("dark-blue")
 
 app = ctk.CTk()
 app.title("AVEditor")
-app.geometry(f"{660}x{335}") #app resolution
+app.geometry(f"{660}x{355}") #app resolution
 
 frame = ctk.CTkFrame(master=app) #main background frame
-frame.grid(row=0, column=1, rowspan=4, padx=(10, 20), pady=(20, 20), sticky="nsew")
+frame.grid(row=0, column=1, rowspan=6, padx=(10, 20), pady=(20, 20), sticky="nsew")
 frame.grid_rowconfigure(4, weight=1)
 
-sidebar_frame = ctk.CTkFrame(master=app, width=140, corner_radius=0) # frame for settings
-sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
-sidebar_frame.grid_rowconfigure(4, weight=1)
+sidebar_frame = ctk.CTkFrame(master=app) # frame for settings
+sidebar_frame.grid(row=0, column=0, rowspan=6, sticky="nsew")
+sidebar_frame.grid_rowconfigure(2, weight=1)
 
 errmsg = tkinter.StringVar()
 errmsg2 = tkinter.StringVar()
 errmsg3 = tkinter.StringVar()
 errmsg4 = tkinter.StringVar()
+downl = tkinter.StringVar()
 
 
 label1 = ctk.CTkLabel(master=frame, text="Insert link to a video from Youtube",
@@ -209,13 +187,13 @@ appearance_mode_label = ctk.CTkLabel(sidebar_frame, text="Appearance Mode:", anc
 appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
 appearance_mode_optionemenu = ctk.CTkOptionMenu(sidebar_frame, values=["Light", "Dark", "System"],
                                                 command=change_appearance_mode_event)
-appearance_mode_optionemenu.grid(row=5, column=0, padx=20, pady=(10, 10))
+appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
 appearance_mode_optionemenu.set("Dark")
 
-language_label = ctk.CTkLabel(sidebar_frame, text="language", anchor="w")
-language_label.grid(row=3, column=0, padx=20, pady=(10, 0))
+language_label = ctk.CTkLabel(sidebar_frame, text="language",anchor="w")
+language_label.grid(row=3, column=0, padx=20, pady=(10, 10))
 language_options = ctk.CTkOptionMenu(sidebar_frame, values=["English", "Russian"], command=change_language)
-language_options.grid(row=4, column=0, padx=20, pady=(10, 10))
+language_options.grid(row=4, column=0, padx=20, pady=(10, 0))
 
 buttonV = ctk.CTkButton(master=frame, text="Video", command=button_Video)#button to download a Video
 buttonV.grid(row=2, column=2, padx=20, pady=10)
@@ -224,13 +202,12 @@ buttonA = ctk.CTkButton(master=frame, text="Audio", command=button_Audio)#button
 buttonA.grid(row=3, column=2, padx=20, pady=10)
 
 button_convert = ctk.CTkButton(master=frame, text="Convert to mp3", command=MP4ToMP3)#button to convert mp4 to mp3
-button_convert.grid(row=5, column=2, padx=20, pady=4)
+button_convert.grid(row=4, column=2, padx=20, pady=15)
 
 button_Save=ctk.CTkButton(master=sidebar_frame,text="Save Settings",command=save_settings)
-button_Save.grid(row=6, column=0, padx=20, pady=(10, 10))
+button_Save.grid(row=7, column=0, padx=20, pady=(10, 10))
 
 error_label = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg, wraplength=250)#error label for incorrect youtube link
-error_label.grid(row=1, column=1, padx=20, pady=(5, 5))
 
 check = app.register(is_valid) # checks if input is correct
 entry1 = ctk.CTkEntry(master=frame, placeholder_text="Link", validate="focusout", validatecommand=(check, "%P"))
@@ -241,10 +218,9 @@ entry2 = ctk.CTkEntry(master=frame, placeholder_text="Save path", validate="focu
 entry2.grid(row=3, column=1, padx=20, pady=10)
 
 error_label2 = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg2, wraplength=250)#error label for incorrect path
-error_label2.grid(row=4, column=1, padx=20, pady=5)
 
-bar=ctk.CTkProgressBar(master=frame,width=100)
+Download_label=ctk.CTkLabel(master=sidebar_frame,fg_color="transparent", textvariable=downl, wraplength=250)
 
 settings()
-
+app.resizable(False,False)
 app.mainloop()
