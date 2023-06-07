@@ -176,16 +176,12 @@ errmsg3 = tkinter.StringVar()
 errmsg4 = tkinter.StringVar()
 downl = tkinter.StringVar()
 
-
-label1 = ctk.CTkLabel(master=frame, text="Insert link to a video from Youtube",
-                      font=ctk.CTkFont(size=11, weight="bold")) #Instruction label
-label1.grid(row=0, column=1, padx=20, pady=(20, 10))
-
-label2 = ctk.CTkLabel(master=frame, text="Download:", font=ctk.CTkFont(size=11, weight="bold"))
-label2.grid(row=1, column=2, padx=10, pady=(5, 5))
+#Sidebar
+Download_label=ctk.CTkLabel(master=sidebar_frame,fg_color="transparent", textvariable=downl, wraplength=250)
 
 appearance_mode_label = ctk.CTkLabel(sidebar_frame, text="Appearance Mode:", anchor="w")
 appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
+
 appearance_mode_optionemenu = ctk.CTkOptionMenu(sidebar_frame, values=["Light", "Dark", "System"],
                                                 command=change_appearance_mode_event)
 appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
@@ -196,17 +192,17 @@ language_label.grid(row=3, column=0, padx=20, pady=(10, 10))
 language_options = ctk.CTkOptionMenu(sidebar_frame, values=["English", "Russian"], command=change_language)
 language_options.grid(row=4, column=0, padx=20, pady=(10, 0))
 
-buttonV = ctk.CTkButton(master=frame, text="Video", command=button_Video)#button to download a Video
-buttonV.grid(row=2, column=2, padx=20, pady=10)
-
-buttonA = ctk.CTkButton(master=frame, text="Audio", command=button_Audio)#button to download a Audio
-buttonA.grid(row=3, column=2, padx=20, pady=10)
-
-button_convert = ctk.CTkButton(master=frame, text="Convert to mp3", command=MP4ToMP3)#button to convert mp4 to mp3
-button_convert.grid(row=4, column=2, padx=20, pady=15)
-
 button_Save=ctk.CTkButton(master=sidebar_frame,text="Save Settings",command=save_settings)
 button_Save.grid(row=7, column=0, padx=20, pady=(10, 10))
+
+#Main Frame
+
+label1 = ctk.CTkLabel(master=frame, text="Insert link to a video from Youtube",
+                      font=ctk.CTkFont(size=11, weight="bold")) #Instruction label
+label1.grid(row=0, column=1, padx=20, pady=(20, 10))
+
+label2 = ctk.CTkLabel(master=frame, text="Download:", font=ctk.CTkFont(size=11, weight="bold"))
+label2.grid(row=1, column=2, padx=10, pady=(5, 5))
 
 error_label = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg, wraplength=250)#error label for incorrect youtube link
 
@@ -220,7 +216,17 @@ entry2.grid(row=3, column=1, padx=20, pady=10)
 
 error_label2 = ctk.CTkLabel(master=frame, fg_color="transparent", textvariable=errmsg2, wraplength=250)#error label for incorrect path
 
-Download_label=ctk.CTkLabel(master=sidebar_frame,fg_color="transparent", textvariable=downl, wraplength=250)
+
+buttonV = ctk.CTkButton(master=frame, text="Video", command=button_Video)#button to download a Video
+buttonV.grid(row=2, column=2, padx=20, pady=10)
+
+buttonA = ctk.CTkButton(master=frame, text="Audio", command=button_Audio)#button to download a Audio
+buttonA.grid(row=3, column=2, padx=20, pady=10)
+
+button_convert = ctk.CTkButton(master=frame, text="Convert to mp3", command=MP4ToMP3)#button to convert mp4 to mp3
+button_convert.grid(row=4, column=2, padx=20, pady=15)
+
+
 
 settings()
 app.resizable(False,False)
