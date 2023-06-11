@@ -7,7 +7,7 @@ from tkinter.messagebox import showerror, showwarning, askyesno
 import customtkinter as ctk
 import random
 import json
-
+import togif
 
 def change_appearance_mode_event(new_appearance_mode: str):  # Function for the appearance change button
     ctk.set_appearance_mode(new_appearance_mode)
@@ -126,7 +126,7 @@ def button_video():  # downloads highest resolution video from youtube
         result = askyesno(title="Error",
                           message=errmsg4.get())  # "Video is age restricted, and can't be accessed without logging in")
         if result:
-            yt = YouTube(link, use_oauth=True, allow_oauth_cache=False)
+            yt = YouTube(link, use_oauth=True, allow_oauth_cache=False,on_complete_callback=compV)
             load = yt.streams.get_highest_resolution()
         load.download(entry2.get())
         print('Downloaded')
@@ -166,6 +166,8 @@ def complete(stream, file_path):
 def compV(stream, file_path):
     Download_label.grid(row=2, column=0, padx=20, pady=5)
 
+def gifmaker():
+    togif.run()
 
 def settings():
     print("Loading settings")
@@ -214,6 +216,8 @@ errmsg3 = tkinter.StringVar()
 errmsg4 = tkinter.StringVar()
 downl = tkinter.StringVar()
 
+button = ctk.CTkButton(master=app, text="Make a Gif", command=gifmaker)
+button.grid(row=7, column=0, padx=20, pady=10)
 # Sidebar
 Download_label = ctk.CTkLabel(master=sidebar_frame, fg_color="transparent", textvariable=downl, wraplength=250)
 
@@ -263,8 +267,9 @@ buttonA = ctk.CTkButton(master=frame, text="Audio", command=button_audio)  # but
 buttonA.grid(row=3, column=2, padx=20, pady=10)
 
 # Convert Frame
-convert_label=ctk.CTkLabel(master=convert_frame,fg_color="transparent",text="Convert",wraplength=100)
+convert_label=ctk.CTkLabel(master=convert_frame,fg_color="transparent",text="Convert",wraplength=110)
 convert_label.grid(row=0,column=0)
+
 button_convert = ctk.CTkButton(master=convert_frame, text="Convert to mp3",
                                command=mp4tomp3)  # button to convert mp4 to mp3
 button_convert.grid(row=1, column=0, padx=20, pady=10)
