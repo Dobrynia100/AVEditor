@@ -27,13 +27,16 @@ def change_language(new_language: str):  # Changing the UI language from a file
     add_text.configure(text=lines[20])
     entry2.configure(placeholder_text=lines[21])
     entry3.configure(placeholder_text=lines[22])
-    loop_switch.configure(values=[lines[23],lines[24]],font=("Ariel",15),width=250,height=45)
+    loop_switch.configure(values=[lines[23], lines[24]], font=("Ariel", 15), width=250, height=45)
 
-def time_symetrize(clip):
+
+def time_symetrize(clip):  # Returns a clip that is time-symmetrized by concatenating the original clip with
+    # its time-reversed version.
     return concatenate([clip, clip.fx(vfx.time_mirror)])
 
 
-def fade_in(clip):
+def fade_in(clip):  # Applies a fade-in effect to the input clip by crossfading it from transparent
+    # to opaque over half of its duration.
     d = clip.duration
     clip = clip.crossfadein(d / 2)
 
@@ -44,7 +47,7 @@ def fade_in(clip):
     return composition
 
 
-def makegif():
+def makegif():  # Function to create a GIF from a video clip with optional effects.
     file_name = os.path.basename(entry1.get())
     file_name = file_name.split('.')[0]
     clip = (VideoFileClip(entry1.get(), audio=False)
@@ -75,7 +78,7 @@ def path_valid(path):  # Checks if the entered path is a path to folder or file
     return os.path.isdir(path)
 
 
-def run():
+def run():  # Function to set up and run the application GUI.
     frame.grid(row=0, column=1, rowspan=2, padx=5, sticky="nsew")
     frame.grid_rowconfigure(4, weight=1)
     text_frame.grid(row=2, column=0, rowspan=2, padx=5, pady=5, sticky="nsew")
@@ -93,8 +96,7 @@ def run():
     app.mainloop()
 
 
-def text_edit(clip):
-    # Many options are available for the text (requires ImageMagick)
+def text_edit(clip):  # Adds text to the input video clip.
     pos_x = entry2.get().split(',')[0]
     pos_y = entry2.get().split(',')[1]
     print(pos_x)
@@ -110,11 +112,7 @@ def text_edit(clip):
     return composition
 
 
-def background():
-    print("back")
-
-
-def enable_all_widgets():
+def enable_all_widgets():  # Enables or disables all widgets based on the state of the "Add text" checkbox.
     print(add_text.get())
     for child in text_frame.winfo_children():
         if (add_text.get() == "on"):
