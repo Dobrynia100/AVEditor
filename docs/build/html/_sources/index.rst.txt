@@ -18,6 +18,13 @@ Usage
 
 Note:For converting file to mp3 you need to insert path with a file name in the 'Save path' input field.
 Inserted path should be without root directory "\AVEditor\example.mp4" not "C:\AVEditor\example.mp4".
+Gif Maker Usage
+-----
+1.Press the 'Make a Gif' button to open GIF Maker window.
+2.Insert the path to a mp4 video in the 'Path to mp4 file' input field.
+3.Optionally, check the 'Add text' checkbox to add your text in to GIF.
+4.Choose loop method if needed.
+5.Click the 'Make a Gif' button to generate gif.
 
 Settings
 --------
