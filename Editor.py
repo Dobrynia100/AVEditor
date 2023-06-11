@@ -15,6 +15,7 @@ def change_appearance_mode_event(new_appearance_mode: str):  # Function for the 
 
 def change_language(new_language: str):  # Changing the UI language from a file
     print(new_language)
+    togif.change_language(language_options.get())
     if new_language == "English":
         file = open("Eng_language", "r")
         lines = file.readlines()
@@ -31,6 +32,7 @@ def change_language(new_language: str):  # Changing the UI language from a file
     buttonA.configure(text=lines[5])
     button_convert.configure(text=lines[6])
     button_convert_webm.configure(text=lines[14])
+    button.configure(text=lines[19])
     entry1.configure(placeholder_text=lines[7])
     entry2.configure(placeholder_text=lines[8])
     errmsg.set(lines[9])
@@ -167,7 +169,9 @@ def compV(stream, file_path):
     Download_label.grid(row=2, column=0, padx=20, pady=5)
 
 def gifmaker():
+    togif.change_language(language_options.get())
     togif.run()
+
 
 def settings():
     print("Loading settings")
