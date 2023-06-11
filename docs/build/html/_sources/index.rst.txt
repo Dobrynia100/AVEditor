@@ -14,12 +14,13 @@ Usage
 3. Click the 'Video' button to download the video.
 4. Click the 'Audio' button to download only the audio from the video.
 5. Click the 'Convert to mp3' button to convert an mp4 file to mp3 format.
-5. Click the 'Convert to webm' button to convert an mp4 file to webm format.
+6. Click the 'Convert to webm' button to convert an mp4 file to webm format.
 
 Note:For converting file to mp3 you need to insert path with a file name in the 'Save path' input field.
 Inserted path should be without root directory "\AVEditor\example.mp4" not "C:\AVEditor\example.mp4".
+
 Gif Maker Usage
------
+----------------------
 1.Press the 'Make a Gif' button to open GIF Maker window.
 2.Insert the path to a mp4 video in the 'Path to mp4 file' input field.
 3.Optionally, check the 'Add text' checkbox to add your text in to GIF.
