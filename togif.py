@@ -60,7 +60,8 @@ def makegif():  # Function to create a GIF from a video clip with optional effec
         clip = fade_in(clip)
     if (add_text.get() == "on"):
         clip = text_edit(clip)
-    clip.write_gif(f"{file_name}.gif", program='imageio', fuzz=2, opt='wu')
+    gif_path = os.path.split(entry1.get())[0] + '\\' + str(file_name) + '.gif'
+    clip.write_gif(gif_path, program='imageio', fuzz=2, opt='wu')
     clip.close()
 
 
@@ -78,7 +79,40 @@ def path_valid(path):  # Checks if the entered path is a path to folder or file
     return os.path.isdir(path)
 
 
-def run():  # Function to set up and run the application GUI.
+def run(toplevel_window):  # Function to set up and run the application GUI.
+    global frame, text_frame, label2, check, entry1, entry2, entry3, button_gif, add_text, font_menu, color_menu, loop_switch
+    toplevel_window.geometry(f"{350}x{330}")
+    frame = ctk.CTkFrame(master=toplevel_window)  # main background frame
+
+    text_frame = ctk.CTkFrame(master=frame)
+
+    # Main Frame
+
+    label2 = ctk.CTkLabel(master=frame, text="Loop method:", font=ctk.CTkFont(size=11, weight="bold"))
+
+    check = toplevel_window.register(path_valid)  # checks if input is correct
+
+    entry1 = ctk.CTkEntry(master=frame, placeholder_text="Path to mp4 file", validate="focusout",
+                                          validatecommand=(check, "%P"))
+
+    button_gif = ctk.CTkButton(master=frame, text="Make a Gif",
+                                               command=makegif)  # button to download a Video
+
+    add_text = ctk.CTkCheckBox(master=frame, text="Add text", onvalue="on", offvalue="off",
+                                               command=enable_all_widgets)
+
+    font_menu = ctk.CTkOptionMenu(master=text_frame, state="disabled",
+                                                  values=["Comic Sans", "Ariel", "Amiri-Bold"])
+    color_menu = ctk.CTkOptionMenu(master=text_frame, state="disabled", values=["white", "black"])
+
+    entry2 = ctk.CTkEntry(master=text_frame, state="disabled", placeholder_text="Position x,y",
+                                          validate="focusout")
+    entry3 = ctk.CTkEntry(master=text_frame, state="disabled", placeholder_text="Text")
+    loop_switch = ctk.CTkSegmentedButton(master=frame, values=["Fade in", "Time-symetrization"])
+
+
+
+def appear(toplevel_window,language):
     frame.grid(row=0, column=1, rowspan=2, padx=5, sticky="nsew")
     frame.grid_rowconfigure(4, weight=1)
     text_frame.grid(row=2, column=0, rowspan=2, padx=5, pady=5, sticky="nsew")
@@ -91,11 +125,10 @@ def run():  # Function to set up and run the application GUI.
     label2.grid(row=4, column=0, padx=10, pady=(5, 5), columnspan=2)
     loop_switch.grid(row=5, column=0, padx=10, pady=5, columnspan=2)
     button_gif.grid(row=7, column=0, padx=20, pady=10, sticky="nsew", columnspan=2)
+    change_language(language)
 
-    app.resizable(False, False)
-    app.mainloop()
-
-
+    toplevel_window.resizable(False, False)
+    toplevel_window.mainloop()
 def text_edit(clip):  # Adds text to the input video clip.
     pos_x = entry2.get().split(',')[0]
     pos_y = entry2.get().split(',')[1]
@@ -121,36 +154,3 @@ def enable_all_widgets():  # Enables or disables all widgets based on the state 
             child.configure(state='disabled')
 
 
-# def on_closing():
-#     app.protocol("WM_DELETE_WINDOW")
-
-app = ctk.CTk()
-app.title("AVEditor")
-app.geometry(f"{350}x{330}")  # app resolution
-
-frame = ctk.CTkFrame(master=app)  # main background frame
-
-text_frame = ctk.CTkFrame(master=frame)
-
-# Main Frame
-
-label2 = ctk.CTkLabel(master=frame, text="Loop method:", font=ctk.CTkFont(size=11, weight="bold"))
-
-check = app.register(path_valid)  # checks if input is correct
-
-entry1 = ctk.CTkEntry(master=frame, placeholder_text="Path to mp4 file", validate="focusout",
-                      validatecommand=(check, "%P"))
-
-button_gif = ctk.CTkButton(master=frame, text="Make a Gif", command=makegif)  # button to download a Video
-
-add_text = ctk.CTkCheckBox(master=frame, text="Add text", onvalue="on", offvalue="off", command=enable_all_widgets)
-
-font_menu = ctk.CTkOptionMenu(master=text_frame, state="disabled", values=["Comic Sans", "Ariel", "Amiri-Bold"])
-color_menu = ctk.CTkOptionMenu(master=text_frame, state="disabled", values=["white", "black"])
-
-entry2 = ctk.CTkEntry(master=text_frame, state="disabled", placeholder_text="Position x,y", validate="focusout")
-entry3 = ctk.CTkEntry(master=text_frame, state="disabled", placeholder_text="Text")
-
-loop_switch = ctk.CTkSegmentedButton(master=frame, values=["Fade in", "Time-symetrization"])
-
-# app.protocol("WM_DELETE_WINDOW",on_closing)

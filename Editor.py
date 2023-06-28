@@ -15,7 +15,7 @@ def change_appearance_mode_event(new_appearance_mode: str):  # Function for the 
 
 def change_language(new_language: str):  # Changing the UI language from a file
     print(new_language)
-    togif.change_language(language_options.get())
+    #togif.change_language(language_options.get())
     if new_language == "English":
         file = open("Eng_language", "r")
         lines = file.readlines()
@@ -110,7 +110,7 @@ def path_valid(path):  # Checks if the entered path is a path to folder or file
 
 
 def button_video():  # downloads highest resolution video from youtube
-    try:
+   # try:
         if random.random() <= 0.01:
             link = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
         else:
@@ -119,17 +119,20 @@ def button_video():  # downloads highest resolution video from youtube
         yt = YouTube(link)  # , use_oauth=True, allow_oauth_cache=True)
 
         if yt.age_restricted:
+            print(yt.age_restricted)
             yt.bypass_age_gate()
+            result = askyesno(title="Error",
+                              message=errmsg4.get())  # "Video is age restricted, and can't be accessed without logging in")
+
+            if result:
+                yt = YouTube(link, use_oauth=True, allow_oauth_cache=True, on_complete_callback=compV)
+
 
         print("Title:", yt.title)
         load = yt.streams.get_highest_resolution()
         print('Video')
-    except Exception as e:
-        result = askyesno(title="Error",
-                          message=errmsg4.get())  # "Video is age restricted, and can't be accessed without logging in")
-        if result:
-            yt = YouTube(link, use_oauth=True, allow_oauth_cache=False,on_complete_callback=compV)
-            load = yt.streams.get_highest_resolution()
+  #  except Exception as e:
+
         load.download(entry2.get())
         print('Downloaded')
 
@@ -140,6 +143,7 @@ def button_audio():  # downloads only audio from youtube video
         yt = YouTube(link,
                      on_complete_callback=complete)  # ,use_oauth=True,  allow_oauth_cache=True,on_progress_callback=progress_func,on_complete_callback=complete)
         if yt.age_restricted:
+            print(yt.age_restricted)
             yt.bypass_age_gate()
 
         print("Title:", yt.title)
@@ -148,7 +152,7 @@ def button_audio():  # downloads only audio from youtube video
         load.download(entry2.get())
         print('Downloaded')
     except Exception as e:
-        showerror(title="Error", message=str(errmsg4.get(), str(e)))
+        showerror(title="Error", message=(errmsg4.get(), str(e)))
 
 
 def complete(stream, file_path):
@@ -169,8 +173,17 @@ def compV(stream, file_path):
     Download_label.grid(row=2, column=0, padx=20, pady=5)
 
 def gifmaker():
-    togif.change_language(language_options.get())
-    togif.run()
+    toplevel_window = ctk.CTkToplevel(app)
+    toplevel_window.title("GIFMaker")
+    if toplevel_window is not None:
+        print("fffff")
+
+        togif.run(toplevel_window)
+        togif.appear(toplevel_window,language_options.get())
+        toplevel_window.focus()
+        toplevel_window.lift()
+        #toplevel_window.deiconify()
+        #togif.change_language(language_options.get())
 
 
 def settings():
@@ -219,9 +232,12 @@ errmsg2 = tkinter.StringVar()
 errmsg3 = tkinter.StringVar()
 errmsg4 = tkinter.StringVar()
 downl = tkinter.StringVar()
+# toplevel_window = ctk.CTkToplevel(app)
+
 
 button = ctk.CTkButton(master=app, text="Make a Gif", command=gifmaker)
 button.grid(row=7, column=0, padx=20, pady=10)
+
 # Sidebar
 Download_label = ctk.CTkLabel(master=sidebar_frame, fg_color="transparent", textvariable=downl, wraplength=250)
 
